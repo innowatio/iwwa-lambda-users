@@ -1,0 +1,15 @@
+language: node_js
+
+node_js:
+  - "5"
+
+#services:
+#  - your services (e.g. mongodb)
+
+#env:
+#  - YOUR_ENV_VAR=http://localhost:3000
+
+script:
+  - npm run lint
+  - npm run coverage
+  - npm run codecov
