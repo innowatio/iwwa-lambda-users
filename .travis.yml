@@ -1,13 +1,13 @@
 language: node_js
 
 node_js:
-  - "5"
+  - "6"
 
-#services:
-#  - your services (e.g. mongodb)
+services:
+  - mongodb
 
-#env:
-#  - YOUR_ENV_VAR=http://localhost:3000
+env:
+  - MONGODB_URL=mongodb://localhost:27017/test
 
 script:
   - npm run lint
