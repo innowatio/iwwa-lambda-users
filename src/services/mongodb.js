@@ -18,7 +18,9 @@ async function update(collection, id, object) {
     const db = await getMongoClient();
     await db.collection(collection).updateOne(
         {"services.sso.uid": id},
-        object,
+        {
+            $set: object
+        },
         {upsert: false}
     );
 }
