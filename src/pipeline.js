@@ -2,7 +2,7 @@ import log from "services/logger";
 
 import {updateExistingUser} from "steps/update-user";
 
-export default async function pipeline(event) {
+export default async function pipeline(event, options) {
     log.info(event);
 
     try {
@@ -21,7 +21,7 @@ export default async function pipeline(event) {
             return null;
         }
 
-        await updateExistingUser(rawUser);
+        await updateExistingUser(rawUser, options.spreadValues);
 
     } catch (error) {
         log.error(error);

@@ -75,7 +75,7 @@ describe("Handle user event from kinesis stream", () => {
         expect(users.length).to.be.equal(0);
     });
 
-    it("Update user info correctly", async () => {
+    it("Update user info correctly [CASE 0: replace saved infos]", async () => {
 
         const userEvent = {
             id: v4(),
@@ -94,7 +94,8 @@ describe("Handle user event from kinesis stream", () => {
             services: {
                 sso: {
                     uid: "user.test"
-                }
+                },
+                sites: ["sito-3"],
             }
         });
 
@@ -112,6 +113,54 @@ describe("Handle user event from kinesis stream", () => {
         expect(user.sites).to.be.deep.equal([
             "sito-1",
             "sito-2"
+        ]);
+
+        expect(user.roles).to.be.deep.equal([
+            "admin"
+        ]);
+
+        expect(user.services.sso.uid).to.be.deep.equal("user.test");
+    });
+
+    it("Update user info correctly [CASE 1: append saved infos]", async () => {
+
+        const userEvent = {
+            id: v4(),
+            data: {
+                element: {
+                    uid: "user.test",
+                    sites: ["sito-1", "sito-2"],
+                    roles: ["admin"]
+                },
+                id: v4()
+            },
+            type: "element replaced in collection users"
+        };
+
+        usersCollection.insert({
+            services: {
+                sso: {
+                    uid: "user.test"
+                }
+            },
+            sites: ["sito-3"]
+        });
+
+        await handler(getEventFromObject(userEvent), context);
+        expect(context.succeed).to.have.been.calledOnce;
+
+        const users = await usersCollection.find({}).toArray();
+
+        expect(users.length).to.be.equal(1);
+
+        const user = await usersCollection.findOne({
+            "services.sso.uid": "user.test"
+        });
+
+        expect(user.sites.sort()).to.be.deep.equal([
+            "sito-1",
+            "sito-2",
+            "sito-3"
         ]);
 
         expect(user.roles).to.be.deep.equal([
