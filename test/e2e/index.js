@@ -149,6 +149,9 @@ describe("Handle user event from kinesis stream", () => {
         await handler(getEventFromObject(userEvent), context);
         expect(context.succeed).to.have.been.calledOnce;
 
+        await handler(getEventFromObject(userEvent), context);
+        expect(context.succeed).to.have.been.calledTwice;
+
         const users = await usersCollection.find({}).toArray();
 
         expect(users.length).to.be.equal(1);

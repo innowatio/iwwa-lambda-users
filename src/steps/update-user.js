@@ -1,3 +1,5 @@
+import uniq from "lodash.uniq";
+
 import {findUser, updateUser} from "../services/mongodb";
 
 import log from "../services/logger";
@@ -11,8 +13,8 @@ export async function updateExistingUser(user, appendData) {
         const savedSites = appendData && savedUser.sites ? savedUser.sites : [];
         const savedRoles = appendData && savedUser.roles ? savedUser.roles : [];
 
-        user.sites ? updatedUser.sites = [...savedSites, ...user.sites] : null;
-        user.roles ? updatedUser.roles = [...savedRoles, ...user.roles] : null;
+        user.sites ? updatedUser.sites = uniq([...savedSites, ...user.sites]) : null;
+        user.roles ? updatedUser.roles = uniq([...savedRoles, ...user.roles]) : null;
 
         log.info({
             updatedUser
