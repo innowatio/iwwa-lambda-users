@@ -83,7 +83,14 @@ describe("Handle user event from kinesis stream", () => {
                 element: {
                     uid: "user.test",
                     sites: ["sito-1", "sito-2"],
-                    roles: ["admin"]
+                    roles: ["ruolo-2"],
+                    groups: ["gruppo-1"],
+                    sensors: ["sensore-1"],
+                    profile: {
+                        active: true,
+                        confirmed: true,
+                        isDeleted: false
+                    }
                 },
                 id: v4()
             },
@@ -95,7 +102,15 @@ describe("Handle user event from kinesis stream", () => {
                 sso: {
                     uid: "user.test"
                 },
-                sites: ["sito-3"],
+            },
+            sites: ["sito-3"],
+            roles: ["ruolo-1"],
+            groups: ["gruppo-2"],
+            sensors: ["sensore-2"],
+            profile: {
+                active: false,
+                confirmed: false,
+                isDeleted: false
             }
         });
 
@@ -116,8 +131,22 @@ describe("Handle user event from kinesis stream", () => {
         ]);
 
         expect(user.roles).to.be.deep.equal([
-            "admin"
+            "ruolo-2"
         ]);
+
+        expect(user.groups.sort()).to.be.deep.equal([
+            "gruppo-1"
+        ]);
+
+        expect(user.sensors.sort()).to.be.deep.equal([
+            "sensore-1"
+        ]);
+
+        expect(user.profile).to.be.deep.equal({
+            active: true,
+            confirmed: true,
+            isDeleted: false
+        });
 
         expect(user.services.sso.uid).to.be.deep.equal("user.test");
     });
@@ -130,7 +159,14 @@ describe("Handle user event from kinesis stream", () => {
                 element: {
                     uid: "user.test",
                     sites: ["sito-1", "sito-2"],
-                    roles: ["admin"]
+                    roles: ["ruolo-2"],
+                    groups: ["gruppo-1"],
+                    sensors: ["sensore-1"],
+                    profile: {
+                        active: true,
+                        confirmed: true,
+                        isDeleted: false
+                    }
                 },
                 id: v4()
             },
@@ -143,7 +179,15 @@ describe("Handle user event from kinesis stream", () => {
                     uid: "user.test"
                 }
             },
-            sites: ["sito-3"]
+            sites: ["sito-3"],
+            roles: ["ruolo-1"],
+            groups: ["gruppo-2"],
+            sensors: ["sensore-2"],
+            profile: {
+                active: false,
+                confirmed: false,
+                isDeleted: false
+            }
         });
 
         await handler(getEventFromObject(userEvent), context);
@@ -166,9 +210,26 @@ describe("Handle user event from kinesis stream", () => {
             "sito-3"
         ]);
 
-        expect(user.roles).to.be.deep.equal([
-            "admin"
+        expect(user.roles.sort()).to.be.deep.equal([
+            "ruolo-1",
+            "ruolo-2"
         ]);
+
+        expect(user.groups.sort()).to.be.deep.equal([
+            "gruppo-1",
+            "gruppo-2"
+        ]);
+
+        expect(user.sensors.sort()).to.be.deep.equal([
+            "sensore-1",
+            "sensore-2"
+        ]);
+
+        expect(user.profile).to.be.deep.equal({
+            active: true,
+            confirmed: true,
+            isDeleted: false
+        });
 
         expect(user.services.sso.uid).to.be.deep.equal("user.test");
     });
