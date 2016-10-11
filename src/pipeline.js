@@ -16,7 +16,10 @@ export default async function pipeline(event, options) {
         if (!rawUser ||
             !rawUser.uid ||
             !rawUser.sites &&
-            !rawUser.roles
+            !rawUser.roles && 
+            !rawUser.sensors &&
+            !rawUser.groups &&
+            !rawUser.profile
         ) {
             return null;
         }

@@ -233,4 +233,86 @@ describe("Handle user event from kinesis stream", () => {
 
         expect(user.services.sso.uid).to.be.deep.equal("user.test");
     });
+
+    it("Update user info correctly [CASE 2: append partial infos]", async () => {
+
+        usersCollection.insert({
+            "services": {
+                "sso": {
+                    "uid": "user.test"
+                }
+            },
+            "sensors": [
+                "sensor-1",
+                "sensor-2"
+            ]
+        });
+
+        const userEvent = {
+            id: v4(),
+            data: {
+                element: {
+                    "uid": "user.test",
+                    "sensors": [
+                        "sensor-3"
+                    ]
+                },
+                id: v4()
+            },
+            type: "element replaced in collection users"
+        };
+
+        await handler(getEventFromObject(userEvent), context);
+
+        const user = await usersCollection.findOne({
+            "services.sso.uid": "user.test"
+        });
+
+        expect(user.sensors.sort()).to.be.deep.equal([
+            "sensor-1",
+            "sensor-2",
+            "sensor-3"
+        ]);
+
+    });
+    
+    it("Update user info correctly [CASE 3: replace partial infos]", async () => {
+
+        usersCollection.insert({
+            "services" : {
+                "sso" : {
+                    "uid" : "user.test"
+                }
+            },
+            "sensors" : [ 
+                "sensor-1", 
+                "sensor-2"
+            ]
+        });
+
+        const userEvent = {
+            id: v4(),
+            data: {
+                element: {
+                    "uid": "user.test",
+                    "sensors": [
+                        "sensor-3"
+                    ]
+                },
+                id: v4()
+            },
+            type: "element inserted in collection users"
+        };
+
+        await handler(getEventFromObject(userEvent), context);
+
+        const user = await usersCollection.findOne({
+            "services.sso.uid": "user.test"
+        });
+
+        expect(user.sensors.sort()).to.be.deep.equal([
+            "sensor-3"
+        ]);
+
+    });
 });
