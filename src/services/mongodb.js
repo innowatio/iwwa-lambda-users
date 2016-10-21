@@ -25,6 +25,17 @@ async function update(collection, id, object) {
     );
 }
 
+async function updateById(collection, id, object) {
+    const db = await getMongoClient();
+    await db.collection(collection).updateOne(
+        {"_id": id},
+        {
+            $set: object
+        },
+        {upsert: false}
+    );
+}
+
 async function findOne(collection, query) {
     const db = await getMongoClient();
     return await db.collection(collection).findOne(query);
@@ -34,8 +45,18 @@ export async function updateUser(uid, user) {
     await update(USERS_COLLECTION_NAME, uid, user);
 }
 
+export async function updateUserById(id, user) {
+    await updateById(USERS_COLLECTION_NAME, id, user);
+}
+
 export async function findUser(uid) {
     return await findOne(USERS_COLLECTION_NAME, {
         "services.sso.uid": uid
+    });
+}
+
+export async function findUserById(id) {
+    return await findOne(USERS_COLLECTION_NAME, {
+        "_id": id
     });
 }

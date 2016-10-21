@@ -1,5 +1,9 @@
+import {map} from "bluebird";
+
 import log from "services/logger";
 
+import {addHierarchicalInfos} from "steps/add-hierarchical-infos";
+import {retrieveUserParents} from "steps/retrieve-parents";
 import {updateExistingUser} from "steps/update-user";
 
 export default async function pipeline(event, options) {
@@ -25,6 +29,12 @@ export default async function pipeline(event, options) {
         }
 
         await updateExistingUser(rawUser, options.spreadValues);
+
+        const parents = await retrieveUserParents(rawUser);
+
+        await map(parents, async (parent) => {
+            await addHierarchicalInfos(parent, rawUser);
+        });
 
     } catch (error) {
         log.error(error);
