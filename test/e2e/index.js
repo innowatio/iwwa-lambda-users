@@ -181,6 +181,7 @@ describe("Handle kinesis user event", () => {
             };
 
             await handler(getEventFromObject(userEvent), context);
+            expect(context.succeed).to.have.been.calledOnce;
 
             const user = await usersCollection.findOne({
                 "services.sso.uid": "user.test"
@@ -306,6 +307,7 @@ describe("Handle kinesis user event", () => {
             };
 
             await handler(getEventFromObject(userEvent), context);
+            expect(context.succeed).to.have.been.calledOnce;
 
             const user = await usersCollection.findOne({
                 "services.sso.uid": "user.test"
@@ -369,6 +371,7 @@ describe("Handle kinesis user event", () => {
             };
 
             await handler(getEventFromObject(userEvent), context);
+            expect(context.succeed).to.have.been.calledOnce;
 
             const userParent = await usersCollection.findOne({
                 "services.sso.uid": "user.test.parent"
